@@ -1,3 +1,5 @@
+// Este archivo es el fichero fuente que al compilarse produce el ejecutable HIJO.
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -8,7 +10,6 @@
 #include <sys/shm.h>
 #include <sys/sem.h>
 #include <sys/msg.h>
-
 
 
 int main(int argc, char *argv[]) {
