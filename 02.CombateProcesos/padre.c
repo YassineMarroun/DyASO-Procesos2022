@@ -45,7 +45,7 @@ int main(int argc, char *argv[]){
 
     // Se crea una región de memoria compartida lista que enlazará con un array con capacidad para N PIDs.
     shmid = shmget(llave, n*sizeof(int), IPC_CREAT | 0600);
-    if (shmid==-1) {
+    if (shmid == -1) {
         perror("Error shmid");
         exit(3);
     }
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]){
     // Se crea un semáforo sem que se usará para proteger el acceso a dicha variable compartida. 
     semid = semget(llave, 1, IPC_CREAT | 0600);
 
-    if (semid==-1) {
+    if (semid == -1) {
         perror("Error semget"); 
         exit(3);
     }
@@ -64,19 +64,19 @@ int main(int argc, char *argv[]){
 
     resultadoSem = semctl(semid, 0, SETVAL, 0);
     
-    if (resultadoSem==-1) {
+    if (resultadoSem == -1) {
         perror("Error semctl"); 
         exit(3);
     }
 
     struct sembuf operaciones[2];
 
-    operaciones[0].sem_num=0; /*Semáforo número 0*/
-    operaciones[0].sem_op=-1; /*Operación que emula P*/
-    operaciones[0].sem_flg=0;
+    operaciones[0].sem_num = 0; /*Semáforo número 0*/
+    operaciones[0].sem_op = -1; /*Operación que emula P*/
+    operaciones[0].sem_flg = 0;
 
-    operaciones[1].sem_num=0; /*Semáforo número 0*/
-    operaciones[1].sem_op=1;  /*Operación que emula a V*/
+    operaciones[1].sem_num = 0; /*Semáforo número 0*/
+    operaciones[1].sem_op = 1;  /*Operación que emula a V*/
     operaciones[1].sem_flg=0;
 
     //semop(semid, operaciones, 1);
@@ -100,12 +100,12 @@ int main(int argc, char *argv[]){
             exit(5);
         } else if (pid == 0) {
             char *arE[1];
-            printf("pid del proceso hijo = %d\n",getpid());
+            printf("pid del proceso hijo = %d\n", getpid());
             execvp("./hijo", arE);
 
         } else {
 	    /* Este código solo lo ejecuta el proceso padre */
-            printf("pid del proceso padre=%d\n",getpid());
+            printf("pid del proceso padre=%d\n", getpid());
         }
     }
 
