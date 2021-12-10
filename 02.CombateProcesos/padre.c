@@ -27,7 +27,7 @@ int main(int argc, char *argv[]){
 
 
     // Se crea la llave.
-    if ((llave=ftok("padre",'Y')) == -1) {
+    if ((llave = ftok("padre", 'Y')) == -1) {
         perror("Error en ftok");
         exit(1);
     }
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]){
         exit(3);
     }
     printf("Memoria compartida creada: %d\n", shmid);
-    lista=shmat(shmid, 0, 0);
+    lista = shmat(shmid, 0, 0);
 
 
     // Se crea un semáforo sem que se usará para proteger el acceso a dicha variable compartida. 
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]){
         perror("Error semget"); 
         exit(3);
     }
-    printf("Semãforo creado: %d\n", semid);
+    printf("Semaforo creado: %d\n", semid);
 
     resultadoSem = semctl(semid, 0, SETVAL, 0);
     
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]){
 
     operaciones[1].sem_num = 0; /*Semáforo número 0*/
     operaciones[1].sem_op = 1;  /*Operación que emula a V*/
-    operaciones[1].sem_flg=0;
+    operaciones[1].sem_flg = 0;
 
     //semop(semid, operaciones, 1);
 
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]){
 
         } else {
 	    /* Este código solo lo ejecuta el proceso padre */
-            printf("pid del proceso padre=%d\n", getpid());
+            printf("pid del proceso padre = %d\n", getpid());
         }
     }
 
