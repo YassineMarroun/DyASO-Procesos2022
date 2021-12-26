@@ -82,7 +82,7 @@ int main(int argc, char *argv[]){
     //semop(semid, operaciones, 1);
 
 
-    // Se crea una tubería sin nombre barrera.
+    // Se crea una tuberí­a sin nombre barrera.
     if (pipe(barrera) == -1) { 
         perror("Error en pipe"); 
         exit(4); 
@@ -90,13 +90,13 @@ int main(int argc, char *argv[]){
     printf("Se crean procesos\n");
 
 
-    // A continuación creará N procesos hijos (H1…HN), donde N es un parámetro que 
-    // se pasada como entrada al invocarlo desde Ejecicio2.sh. Cada hijo realizará un 
+    // A continuación creará N procesos hijos (H1...HN), donde N es un parámetro que 
+    // se pasa como entrada al invocarlo desde Ejecicio2.sh. Cada hijo realizará un 
     // exec() del ejecutable HIJO.
     for(int i=1; i <= n; i++){
         pid = fork();
         if (pid == -1) {
-            printf("Error en la ejecución del fork");
+            printf("Error en la ejecuciódel fork");
             exit(5);
         } else if (pid == 0) {
             char *arE[1];
