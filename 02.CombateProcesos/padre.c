@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 
 	// 1º Creamos llave asociada al propio fichero ejecutable
 	//=======================================================
-	llave = ftok(argv[0],'X');
+	llave = ftok(argv[0],'Y');
 	if (llave ==-1)	 { 
 		perror("Error en en ftok"); 
 		exit(1);
