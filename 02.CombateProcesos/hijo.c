@@ -34,7 +34,7 @@ void indefenso() {
 	
 	// Variables
 	key_t llave;		// Llave
-	int lista;			// Identificador de la región de memoria compartida
+	int memCompartida;	// Identificador de la región de memoria compartida
 	int sem;			// Identificador del semaforo
 	int aleatorio1;		// Variable para almacenar el número aleatorio para seleccionar el PID
 	int pidAleatorio ;	// PID del proceso seleccionado aleatoriamente
@@ -57,12 +57,12 @@ void indefenso() {
 
 	
 	// Se crea la región de memoria compartida
-	lista = shmget(llave,N*sizeof(int),IPC_CREAT | 0600);
-	if (lista == -1) { 
+	memCompartida = shmget(llave, N*sizeof(int), IPC_CREAT | 0600);
+	if (memCompartida == -1) { 
 		perror("Error en shmget"); 
 		exit(1);
 	}
-	lista = shmat(lista, 0, 0);
+	lista = shmat(memCompartida, 0, 0);
 
 	// Se crea el semáforo
 	sem = semget(llave, 1, 0600); 
