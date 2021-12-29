@@ -35,7 +35,7 @@ void indefenso() {
 	// Variables
 	key_t llave;		// Llave
 	int memCompartida;	// Identificador de la región de memoria compartida
-	int sem;			// Identificador del semaforo
+	int sem;			// Identificador del semáforo
 	int aleatorio1;		// Variable para almacenar el número aleatorio para seleccionar el PID
 	int pidAleatorio ;	// PID del proceso seleccionado aleatoriamente
 	int pidProceso;		// PID del proceso 
@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
 		mensajeCola.pid = getpid();
 		strcpy(mensajeCola.estado, estado);
 		
-		mensajes = msgget(llave,IPC_CREAT | 0600);
+		mensajes = msgget(llave, IPC_CREAT | 0600);
 
 		if (mensajes == -1) {
 			perror("Error en msgget");

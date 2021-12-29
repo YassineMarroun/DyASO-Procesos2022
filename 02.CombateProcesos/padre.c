@@ -3,142 +3,134 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <signal.h>
+#include <wait.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
-#include <unistd.h>
-#include <signal.h>
 #include <sys/shm.h>
 #include <sys/msg.h>
-#include <wait.h>
 #define MAX 256
 
 
-
 int *pids;
-int numRonda=0;
+int numRonda = 0;
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
+
 	// Variables
-	//===========
-	key_t llave;		// llave
-	int mensajes;		// identificador de la cola de mensajes
-	int lista; 		// identificador de la zona de memoria compartida
-	int N;			// Nº de procesos iniciales
-	int K; 			// Variable que controla en nº de procesos vivos 
-	int sem;		// identificador del semaforo
+	key_t llave;		// Llave
+	int mensajes;		// Identificador de la cola de mensajes
+	int lista; 			// Identificador de la región de memoria compartida
+	int N;				// Número de procesos iniciales
+	int K; 				// Variable que controla en número de procesos vivos 
+	int sem;			// Identificador del semáforo
 	int barrera[2];		// Tubería sin nombre, barrera
-	int i;			// Variable para bucle for
-	int pidHijo;		// Nº  pid de los hijos que se crean
-	int eliminados;		// Nº de hijos eliminados en cada ronda
+	int i;				// Variable para bucle for
+	int pidHijo;		// Número PID de los hijos que se crean
+	int eliminados;		// Número de hijos eliminados en cada ronda
 
-	// Comprobamos si el nº de argumentos de entrada es correcto
-	if(argc!=2) {
-		perror("Error en los parámetros de entrada \n");
+
+	// Se comprueba si el número de argumentos de entrada es correcto
+	if(argc != 2) {
+		perror("Error en los parámetros de entrada");
 		exit(-1);
 	}
 
 
-	// 1º Creamos llave asociada al propio fichero ejecutable
-	//=======================================================
-	llave = ftok(argv[0],'Y');
-	if (llave ==-1)	 { 
+	// 1. Se crea la llave asociada al propio fichero ejecutable
+	llave = ftok(argv[0], 'Y');
+	if (llave == -1) { 
 		perror("Error en en ftok"); 
 		exit(1);
 	}
 
-	// 2º Creamos cola de mensajes, mensajes
-	//=====================================
-	mensajes = msgget(llave,IPC_CREAT | 0600);
-	if (mensajes==-1) {
+
+	// 2. Se crea la cola de mensajes, mensajes
+	mensajes = msgget(llave, IPC_CREAT | 0600);
+	if (mensajes == -1) {
 		perror("Error en msgget");
 		exit(1);
 	}
 
-	// Estructura que contiene el tupo del mensaje, el pid y el estado
+
+	// Estructura que contiene el tipo del mensaje, el PID y el estado
 	struct {
 		int tipo;
 		int pid;
 		char estado[MAX];
-	}mensaje;
+	} mensaje;
 
 
-	//3º Creamos region de memoria compartida, lista
-	//==============================================
-
-	N = atoi(argv[1]);		// Recuperamos el 1º argumento nº de hijos
-	K = N;				// Inicialmentel nº prcesos vivos seran todos los procesos
+	// 3. Se crea la región de memoria compartida, lista
+	N = atoi(argv[1]);		// Se recupeera el número de hijos
+	K = N;					// De inicio, el número de procesos vivos son todos los procesos
 	
-	lista=shmget(llave,N*sizeof(int),IPC_CREAT | 0600);
-	if (lista==-1) { 
+	lista = shmget(llave, N*sizeof(int), IPC_CREAT | 0600);
+	if (lista == -1) { 
 		perror("Error en shmget"); 
 		exit(1);
 	}
 
-	pids = shmat(lista, 0, 0);	// Union de la zona de memoria compartida con lista
+	pids = shmat(lista, 0, 0);	// Unión de la región de memoria compartida con lista
 	
 
-	// 4º Creamos semáforo, sem
-	//=========================
-	sem= semget(llave, 1, IPC_CREAT| 0600);
-	if (sem ==-1) { 
-		perror("Error en semget\n"); 
+	// 4. Se crea el semáforo, sem
+	sem = semget(llave, 1, IPC_CREAT| 0600);
+	if (sem == -1) { 
+		perror("Error en semget"); 
 		exit(1);
 	}
 	
-	semctl(sem, 0, SETVAL, 0);		// Incializamos valor del semanaforo
+	semctl(sem, 0, SETVAL, 0);		// Se inicializa el valor del semaáforo
  
 	struct sembuf operP[1];			/* Operacion que emula P */
-	operP[0].sem_num=0;	
-	operP[0].sem_op=-1; 	
-	operP[0].sem_flg=0;
+	operP[0].sem_num = 0;	
+	operP[0].sem_op = -1; 	
+	operP[0].sem_flg = 0;
 
 	struct sembuf operV[1];			/* Operacion que emula V */
-	operV[0].sem_num=0;	
-	operV[0].sem_op=1; 	
-	operV[0].sem_flg=0;
+	operV[0].sem_num = 0;	
+	operV[0].sem_op = 1; 	
+	operV[0].sem_flg = 0;
 	
 	semop(sem, operV, 1); 			// Operación V para que tenga el valor 1
 
 
-	// 5º Creamos tuberia sin nombre, barrera
-	//=========================
-	if(pipe(barrera)==-1) {
-		perror("Error al crear la tubería \n");
+	// 5. Se crea la tubería sin nombre, barrera
+	if(pipe(barrera) == -1) {
+		perror("Error al crear la tubería");
 		exit(-1);
 	}
 	
 	
-
-	// 6º Se crean N procesos hijos
-	//=============================
-	printf("\nINICIO: se crean los  siguientes procesos\n");
-	printf("=========================================\n");
-	for(i=0;i<N;i++)
-	{
+	// 6. Se crean N procesos hijos
+	printf("\nINICIO: Creación de 10 procesos\n");
+	printf("-------------------------------\n");
+	for(i = 0; i < N; i++) {
 		pidHijo = fork();
-		if(pidHijo==-1) {
-			printf("Error al crear el proceso \n");
+		if(pidHijo == -1) {
+			printf("Error al crear el proceso");
 			exit(-1);
-		} else if (pidHijo !=0){
+		} else if (pidHijo != 0) {
 			// Se ejecuta el padre
-			printf("Hijo %d: %d\n",(i+1),pidHijo);
-			semop(sem, operP, 1);				// OperacionP para acceder a zona de memoria compartida
-			pids[i]=pidHijo;				// Guardamos PID del hijo en el array
-			semop(sem, operV, 1);				// OperacionV al salir de la zona de memoria compartida			
+			printf("Hijo %d: %d\n", (i + 1), pidHijo);
+			semop(sem, operP, 1);			// Operación P para acceder a la región de memoria compartida
+			pids[i] = pidHijo;				// Se guarda el PID del hijo en el array
+			semop(sem, operV, 1);			// Operación V al salir de la región de memoria compartida			
 
 		} else {
 			// Se ejecuta el hijo
-			char *argHijo[]={"./hijo",argv[1],NULL};	// Como argumento nº total de hijos	
-			execvp("./hijo",argHijo);			// Hijo realiza exec del ejecutable hijo
+			char *argHijo[] = {"./hijo", argv[1], NULL};	// Se pasa como argumento el número total de hijos	
+			execvp("./hijo", argHijo);						// Hijo realiza exec sobre el ejecutable hijo
 		}
 	}
 
+	numRonda = 1;	// Se inicializa la variable ronda
 
-	numRonda =1;	// Inicializamos variable ronda
 
-	// 7º Inicio de ronda
+	// 7. Inicio de ronda
 	//===================
 	do{
 		printf("\nRONDA Nº %d \n",numRonda);
