@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 	
-	semctl(sem, 0, SETVAL, 0);		// Se inicializa el valor del semaáforo
+	semctl(sem, 0, SETVAL, 0);		// Se inicializa el valor del semáforo
  
 	struct sembuf operP[1];			/* Operacion que emula P */
 	operP[0].sem_num = 0;	
@@ -131,7 +131,6 @@ int main(int argc, char *argv[]) {
 
 
 	// 7. Inicio de ronda
-	//===================
 	do{
 		printf("\nRONDA Nº %d \n",numRonda);
 		printf("==========\n");		
@@ -140,7 +139,7 @@ int main(int argc, char *argv[]) {
 		// Por cada hijo que quede vivo, escribimos en barrera
 		for(i=0;i<K;i++)
 		{
-			if ( (write(barrera[1],mensajeInicio,strlen(mensajeInicio))) <0) {
+			if ( (write(barrera[1], mensajeInicio, strlen(mensajeInicio))) < 0) {
 				printf("Error en tubería \n");
 				exit(1);
 			}	

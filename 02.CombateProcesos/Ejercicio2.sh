@@ -9,7 +9,7 @@
 gcc padre.c -o padre
 gcc hijo.c -o hijo
 
-./padre $1
+./padre 10
 
 rm padre
 rm hijo
