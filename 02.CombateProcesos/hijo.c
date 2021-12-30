@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
 
 		llave = ftok("padre", 'Y');	 // Se crea una llave asociada al propio fichero ejecutable
 		if (llave == -1) { 
-			perror("Error en en ftok"); 
+			perror("Error en ftok"); 
 			exit(1);
 		}
 
