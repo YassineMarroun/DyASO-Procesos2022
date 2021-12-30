@@ -1,5 +1,4 @@
 ####################################################################
-# Yassine Marroun Nettah - ymarroun1@alumno.uned.es
 # Trabajo Práctico de Diseño y Administración de Sistemas Operativos
 # TRABAJO 2: Combate de procesos
 ####################################################################
