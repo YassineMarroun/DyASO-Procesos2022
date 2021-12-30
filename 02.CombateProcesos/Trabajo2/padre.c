@@ -15,7 +15,7 @@
 
 
 int *pids;
-int numRonda = 0;
+int numRonda;
 
 int main(int argc, char *argv[]) {
 
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
 
 	// 7. Inicio de ronda
 	do{
-		printf("\nRonda número %d \n",numRonda);
+		printf("\nRonda número %d \n", numRonda);
 		printf("--------------\n");		
 		char mensajeInicio[] = "Iniciando ronda de ataques"; 
 
@@ -191,7 +191,8 @@ int main(int argc, char *argv[]) {
 	printf("---------------------\n");
 
 	if(K == 0) {
-		printf("Empate\n\n");
+		char mensajeEmpate[] = ("Empate\n\n");
+		write(1, mensajeEmpate, sizeof(mensajeEmpate));
 	} else {
 		// Se matan los procesos pendientes
 		for(i = 0; i < N; i++) {
@@ -201,7 +202,9 @@ int main(int argc, char *argv[]) {
 					printf("Error al enviar señal SIGTERM");
 					exit(-1);
 				}
-				printf("El hijo %d ha ganado\n\n", pids[i]);
+				char mensajeGanador[25];
+				sprintf(mensajeGanador, "El hijo %d ha ganado\n\n", pids[i]);
+				write(1, mensajeGanador, sizeof(mensajeGanador));
 				wait(&pidHijo);
 				break;
 			}
