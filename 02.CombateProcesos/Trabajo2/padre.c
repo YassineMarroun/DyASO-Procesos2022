@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
 
 
 	// 3. Se crea la región de memoria compartida, lista
-	N = atoi(argv[1]);		// Se recupeera el número de hijos
+	N = atoi(argv[1]);		// Se recupera el número de hijos
 	K = N;					// De inicio, el número de procesos vivos son todos los procesos
 	
 	lista = shmget(llave, N*sizeof(int), IPC_CREAT | 0600);
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]) {
 	
 
 	// 4. Se crea el semáforo, sem
-	sem = semget(llave, 1, IPC_CREAT| 0600);
+	sem = semget(llave, 1, IPC_CREAT | 0600);
 	if (sem == -1) { 
 		perror("Error en semget"); 
 		exit(1);
@@ -144,14 +144,14 @@ int main(int argc, char *argv[]) {
 			}	
 		}
 
-		int tam = sizeof(mensaje)- sizeof(mensaje.tipo);
+		int tam = sizeof(mensaje) - sizeof(mensaje.tipo);
 		eliminados = 0;
 		for(i = 0; i < K; i++) {
 			msgrcv(mensajes, &mensaje, tam, 1, 0);
 			printf("PROCESO: %d - ESTADO %s \n", mensaje.pid, mensaje.estado);
 
 			// Si el mensaje es KO, se envia señal SIGTERM
-			if(strcmp(mensaje.estado,"KO") == 0) {
+			if(strcmp(mensaje.estado, "KO") == 0) {
 
 				if(kill(mensaje.pid, SIGTERM) == -1) {
 					printf("Error en SIGTERM");

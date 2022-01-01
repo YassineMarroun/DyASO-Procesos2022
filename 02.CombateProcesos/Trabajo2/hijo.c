@@ -96,7 +96,7 @@ void indefenso() {
 		semop(sem, operV, 0); 
 
 		if(pidAleatorio != 0 && pidAleatorio != pidProceso) {
-			printf("\tAtacando al proceso Hi - %d\n",lista[aleatorio1]);
+			printf("\tAtacando al proceso Hi - %d\n", lista[aleatorio1]);
 		}
 	
 	} while(pidAleatorio == 0 || pidAleatorio == pidProceso);
@@ -116,7 +116,7 @@ int main(int argc, char *argv[]) {
 	
 
 	N = atoi(argv[1]);		// Se recupera el número de procesos vivos
-	srand(getpid());		// Se gerenra semilla con el número de PID
+	srand(getpid());		// Se genera semilla con el número de PID
 	
 	// Bucle mientras el proceso este vivo
 	while(1) { 
