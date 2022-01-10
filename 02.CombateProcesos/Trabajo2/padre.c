@@ -22,12 +22,12 @@ int main(int argc, char *argv[]) {
 	// Variables
 	key_t llave;		// Llave
 	int mensajes;		// Identificador de la cola de mensajes
-	int lista; 			// Identificador de la región de memoria compartida
-	int N;				// Número de procesos iniciales
-	int K; 				// Variable que controla en número de procesos vivos 
-	int sem;			// Identificador del semáforo
+	int lista; 		// Identificador de la región de memoria compartida
+	int N;			// Número de procesos iniciales
+	int K; 			// Variable que controla en número de procesos vivos 
+	int sem;		// Identificador del semáforo
 	int barrera[2];		// Tubería sin nombre, barrera
-	int i;				// Variable para bucle for
+	int i;			// Variable para bucle for
 	int pidHijo;		// Número PID de los hijos que se crean
 	int eliminados;		// Número de hijos eliminados en cada ronda
 
@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 
 
 	// 1. Se crea la llave asociada al propio fichero ejecutable
-	llave = ftok(argv[0], 'Y');
+	llave = ftok(argv[0], 'X');
 	if (llave == -1) { 
 		perror("Error en en ftok"); 
 		exit(1);
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
 
 	// 3. Se crea la región de memoria compartida, lista
 	N = atoi(argv[1]);		// Se recupera el número de hijos
-	K = N;					// De inicio, el número de procesos vivos son todos los procesos
+	K = N;				// De inicio, el número de procesos vivos son todos los procesos
 	
 	lista = shmget(llave, N*sizeof(int), IPC_CREAT | 0600);
 	if (lista == -1) { 
@@ -117,13 +117,13 @@ int main(int argc, char *argv[]) {
 			// Se ejecuta el padre
 			printf("Hijo %d: %d\n", (i + 1), pidHijo);
 			semop(sem, operP, 1);			// Operación P para acceder a la región de memoria compartida
-			pids[i] = pidHijo;				// Se guarda el PID del hijo en el array
+			pids[i] = pidHijo;			// Se guarda el PID del hijo en el array
 			semop(sem, operV, 1);			// Operación V al salir de la región de memoria compartida			
 
 		} else {
 			// Se ejecuta el hijo
 			char *argHijo[] = {"./hijo", argv[1], NULL};	// Se pasa como argumento el número total de hijos	
-			execvp("./hijo", argHijo);						// Hijo realiza exec sobre el ejecutable hijo
+			execvp("./hijo", argHijo);			// Hijo realiza exec sobre el ejecutable hijo
 		}
 	}
 
@@ -151,15 +151,15 @@ int main(int argc, char *argv[]) {
 			printf("PROCESO: %d - ESTADO %s \n", mensaje.pid, mensaje.estado);
 
 			// Si el mensaje es KO, se envia señal SIGTERM
-			if(strcmp(mensaje.estado, "KO") == 0) {
+			if(strcmp(mensaje.estado,"KO") == 0) {
 
 				if(kill(mensaje.pid, SIGTERM) == -1) {
 					printf("Error en SIGTERM");
 					exit(1);
 				}
 				eliminados = eliminados + 1;	// Se decrementa el número de procesos hijos vivos
-				wait(&pidHijo);  				// Se espera a que finalice
-				semctl(sem, 0, GETVAL, 0);		// Se obtiene el valor del semáforo
+				wait(&pidHijo);  		// Se espera a que finalice
+				semctl(sem, 0, GETVAL, 0);	// Se obtiene el valor del semáforo
 	
 				while (semctl(sem, 0, GETVAL, 0) <= 0) {	// Se queda a la espera hasta que se puede acceder a la región de memoria compartida
 				} 
@@ -203,7 +203,7 @@ int main(int argc, char *argv[]) {
 					exit(-1);
 				}
 				char mensajeGanador[25];
-				sprintf(mensajeGanador, "El hijo %d ha ganado\n\n", pids[i]);
+				sprintf(mensajeGanador,"El hijo %d ha ganado\n\n", pids[i]);
 				write(1, mensajeGanador, sizeof(mensajeGanador));
 				wait(&pidHijo);
 				break;

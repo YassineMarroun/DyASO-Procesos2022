@@ -18,6 +18,7 @@ gcc hijo.c -o hijo
 
 mknod resultado p
 cat resultado &
+
 ./padre 10
 
 rm resultado

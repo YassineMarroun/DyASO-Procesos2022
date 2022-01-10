@@ -25,7 +25,7 @@ int *lista;
 
 void defensa() {
 	printf("\tEl hijo %d ha repelido un ataque \n", getpid());
-	usleep(200000);			// Se duerme el proceso 0.2 segundos
+	usleep(200000);		// Se duerme el proceso 0.2 segundos
 	strcpy(estado, "OK");	// Se establece estado al valor OK
 }
 
@@ -35,17 +35,17 @@ void indefenso() {
 	// Variables
 	key_t llave;		// Llave
 	int memCompartida;	// Identificador de la región de memoria compartida
-	int sem;			// Identificador del semáforo
+	int sem;		// Identificador del semáforo
 	int aleatorio1;		// Variable para almacenar el número aleatorio para seleccionar el PID
 	int pidAleatorio ;	// PID del proceso seleccionado aleatoriamente
 	int pidProceso;		// PID del proceso 
 
 	printf("\tEl hijo %d ha sido emboscado mientras realizaba un ataque \n", getpid());
-	usleep(100000); 		// Se duerme el proceso 0.1 segundos
+	usleep(100000); 	// Se duerme el proceso 0.1 segundos
 	strcpy(estado, "KO");	// Se establece estado al valor KO
 
 	// Se crea la llave
-	llave = ftok("padre", 'Y');
+	llave = ftok("padre", 'X');
 	if (llave == -1) { 
 		perror("Error en ftok"); 
 		exit(1);
@@ -96,7 +96,7 @@ void indefenso() {
 		semop(sem, operV, 0); 
 
 		if(pidAleatorio != 0 && pidAleatorio != pidProceso) {
-			printf("\tAtacando al proceso Hi - %d\n", lista[aleatorio1]);
+			printf("\tAtacando al proceso %d\n", lista[aleatorio1]);
 		}
 	
 	} while(pidAleatorio == 0 || pidAleatorio == pidProceso);
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
 	// Variables
 	key_t llave;			// Llave
 	int mensajes;			// Identificador de la cola de mensajes
-	int size;				// Tamaño del mensaje a enviar
+	int size;			// Tamaño del mensaje a enviar
 	char mensaje[26];		// Mensaje a enviar
 	int aleatorio;			// Aletario para ver si ataca o defiende
 	
@@ -129,7 +129,7 @@ int main(int argc, char *argv[]) {
 			defensa();
 		}
 
-		llave = ftok("padre", 'Y');	 // Se crea una llave asociada al propio fichero ejecutable
+		llave = ftok("padre", 'X');	 // Se crea una llave asociada al propio fichero ejecutable
 		if (llave == -1) { 
 			perror("Error en ftok"); 
 			exit(1);
